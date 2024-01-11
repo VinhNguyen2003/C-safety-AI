@@ -119,7 +119,7 @@ def preprocess_data(root_directory):
 
     # Train the Word2Vec model
     model = Word2Vec(sentences=all_tokenized_functions, vector_size=100, window=5, min_count=1, workers=4)
-    model.save("word2vec_model.model")
+    model.save("./models/word2vec_model.model")
     # Vectorize functions using the trained model
     aggregated_vectors = []
     for function, label in aggregated_functions_with_labels:

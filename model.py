@@ -21,5 +21,5 @@ test_loss, test_acc = model.evaluate(X_test, y_test)
 print('\nTest Loss:', test_loss)
 print('\nTest Accuracy:', test_acc)
 
-model.save('./CSafetyModel.h5')
+model.save('./models/CSafetyModel.h5')
 

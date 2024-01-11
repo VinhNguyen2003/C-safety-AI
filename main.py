@@ -5,8 +5,8 @@ from gensim.models import Word2Vec
 from preprocessor import tokenize_function, vectorize_function
 import numpy as np
 
-word2vec_model = Word2Vec.load("word2vec_model.model")
-nn_model = load_model('CSafetyModel.h5')
+word2vec_model = Word2Vec.load("models/word2vec_model.model")
+nn_model = load_model('models/CSafetyModel.h5')
 
 def process_file(file_path, nn_model):
     with open(file_path, 'r') as file:
