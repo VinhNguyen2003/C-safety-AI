@@ -8,6 +8,7 @@ import numpy as np
 pitfall_mapping = {
     'Memory_Leak': 0,
     'Stack_Based_Buffer_Overflow': 1,
+    'Heap_Based_Buffer_Overflow' : 2
     # more pitfalls, extend in the future
 }
 
@@ -100,7 +101,7 @@ def pad_vectors(vectors, pad_length):
     """Pad the vectors to a specific length."""
     return np.array([np.pad(vec, (0, max(0, pad_length - len(vec))), 'constant') for vec in vectors])
 
-def main(root_directory):
+def preprocess_data(root_directory):
     all_tokenized_functions = []
     aggregated_functions_with_labels = [] 
     for directory in os.listdir(root_directory):
@@ -126,8 +127,13 @@ def main(root_directory):
         vectorized_function = vectorize_function(tokenized_function, model)
         aggregated_vectors.append((vectorized_function, label))
 
-    print(aggregated_vectors)
+    # Split the data into training and testing sets
+    X = [vector for vector, _ in aggregated_vectors]
+    y = [label for _, label in aggregated_vectors]
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    return X_train, X_test, y_train, y_test
 
 if __name__ == "__main__":
     root_directory = './data'
-    main(root_directory)
+    preprocess_data(root_directory)
