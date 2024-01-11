@@ -119,7 +119,7 @@ def preprocess_data(root_directory):
 
     # Train the Word2Vec model
     model = Word2Vec(sentences=all_tokenized_functions, vector_size=100, window=5, min_count=1, workers=4)
-
+    model.save("word2vec_model.model")
     # Vectorize functions using the trained model
     aggregated_vectors = []
     for function, label in aggregated_functions_with_labels:
@@ -132,6 +132,10 @@ def preprocess_data(root_directory):
     y = [label for _, label in aggregated_vectors]
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    X_train = np.array(X_train)
+    X_test = np.array(X_test)
+    y_train = np.array(y_train)
+    y_test = np.array(y_test)
     return X_train, X_test, y_train, y_test
 
 if __name__ == "__main__":
