@@ -7,7 +7,7 @@ import numpy as np
 
 pitfall_mapping = {
     'Memory_Leak': 0,
-    'Buffer_Overflow': 1,
+    'Stack_Based_Buffer_Overflow': 1,
     # more pitfalls, extend in the future
 }
 
@@ -87,7 +87,6 @@ def create_labeled_dataset(all_vectors, test_size=0.2):
     padded_vectors = [np.pad(vec, (0, max_len - len(vec)), 'constant') for vec in all_vectors]
     vectors = np.array(padded_vectors)
 
-    # Assuming all_vectors is a list of tuples (vector, label)
     labels = [label for _, label in all_vectors]
 
     if vectors.size > 0:
@@ -101,19 +100,21 @@ def pad_vectors(vectors, pad_length):
     """Pad the vectors to a specific length."""
     return np.array([np.pad(vec, (0, max(0, pad_length - len(vec))), 'constant') for vec in vectors])
 
-def main(directory):
+def main(root_directory):
     all_tokenized_functions = []
     aggregated_functions_with_labels = [] 
-    # Process each file and aggregate tokenized functions
-    for filename in os.listdir(directory):
-        if filename.endswith(".c") or filename.endswith(".cpp"):
-            file_path = os.path.join(directory, filename)
-            functions_with_labels = process_c_file(file_path, pitfall_mapping)
-            print(f"Processed {filename}:")
-            for function, label in functions_with_labels:
-                tokenized_function = tokenize_function(function)
-                all_tokenized_functions.append(tokenized_function)
-                aggregated_functions_with_labels.append((function, label))
+    for directory in os.listdir(root_directory):
+        dir_path = os.path.join(root_directory, directory)
+        if os.path.isdir(dir_path):
+            for filename in os.listdir(dir_path):
+                if filename.endswith(".c") or filename.endswith(".cpp"):
+                    file_path = os.path.join(dir_path, filename)
+                    functions_with_labels = process_c_file(file_path, pitfall_mapping)
+                    print(f"Processed {filename} in {directory}:")
+                    for function, label in functions_with_labels:
+                        tokenized_function = tokenize_function(function)
+                        all_tokenized_functions.append(tokenized_function)
+                        aggregated_functions_with_labels.append((function, label))
 
     # Train the Word2Vec model
     model = Word2Vec(sentences=all_tokenized_functions, vector_size=100, window=5, min_count=1, workers=4)
@@ -128,5 +129,5 @@ def main(directory):
     print(aggregated_vectors)
 
 if __name__ == "__main__":
-    directory = './data/MemoryLeak/'
-    main(directory)
+    root_directory = './data'
+    main(root_directory)
